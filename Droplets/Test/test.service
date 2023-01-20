@@ -1,0 +1,31 @@
+[Unit]
+Description=Zeitgeist Battery Station parachain full node
+After=network.target
+Requires=network.target
+
+[Service]
+Type=simple
+User=zeitgeist
+Group=zeitgeist
+RestartSec=5
+Restart=always
+Nice=0
+ExecStart=/services/zeitgeist/bin/zeitgeist \
+    --base-path=/services/zeitgeist/battery_station \
+    --chain=battery_station \
+    --name=zeitgeist_node \
+    --port=30333 \
+    --rpc-port=9933 \
+    --ws-port=9944 \
+    --rpc-external \
+    --ws-external \
+    --rpc-cors=all \
+    --pruning=archive \
+    -- \
+    --port=30334 \
+    --rpc-port=9934 \
+    --ws-port=9945
+
+
+[Install]
+WantedBy=multi-user.target
