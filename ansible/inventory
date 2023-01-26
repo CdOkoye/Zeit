@@ -1,0 +1,7 @@
+[servers]
+test ansible_host=138.197.47.14
+monitoring ansible_host=167.99.48.87
+logging ansible_host=138.197.40.35
+
+[servers:vars]
+ansible_user=root

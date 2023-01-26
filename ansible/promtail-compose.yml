@@ -1,0 +1,15 @@
+version: '3.7'
+services:
+  promtail:
+    image: /grafana/promtail:latest
+    ports:
+      - "9080:9080"
+      - "9081:9081"
+    environment:
+      - ARGS=-config.file=/etc/promtail/promtail-config.yml
+    volumes:
+      - /var/log:/var/log
+      - promtail-config:/etc/promtail
+    command: --config.file=/etc/promtail/promtail-config.yml
+volumes:
+  promtail-config:

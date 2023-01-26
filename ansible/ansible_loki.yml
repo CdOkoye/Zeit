@@ -1,0 +1,12 @@
+- name: Deploy Grafana Loki
+  hosts: logging
+  become: true
+  tasks:
+  - name: Copy the Docker Compose files
+    copy:
+      src: files/docker-compose.yml
+      dest: /opt/loki/docker-compose.yml
+      mode: 0644
+
+  - name: Start the services using Docker Compose
+    command: docker-compose -f /opt/loki/docker-compose.yml up -d

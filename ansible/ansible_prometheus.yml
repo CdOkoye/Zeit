@@ -1,0 +1,18 @@
+- name: Deploy Prometheus
+  hosts: monitoring
+  become: true
+  vars:
+    compose_file: /opt/prometheus/prometheus-compose.yml
+    compose_project_name: prometheus
+  tasks:
+  - name: Copy Prometheus compose file
+    copy:
+      src: prometheus-compose.yml
+      dest: /opt/prometheus/prometheus-compose.yml
+      mode: 0644
+
+  - name: Pull Prometheus image
+    command: docker-compose -f /opt/prometheus/prometheus-compose.yml pull prometheus
+
+  - name: Start Prometheus service
+    command: docker-compose -p prometheus -f /opt/prometheus/prometheus-compose.yml up -d

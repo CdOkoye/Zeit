@@ -1,0 +1,31 @@
+- name: Deploy Alertmanager using Docker Compose
+  hosts: monitoring
+  become: true
+  vars:
+    compose_file: /opt/alertmanager/alertmanager-compose.yml
+  tasks:
+    - name: Install Docker Compose
+      apt:
+        name: docker-compose
+        state: present
+
+    - name: Create the compose and config file directories
+      file:
+        path: /opt/alertmanager
+        state: directory
+
+    - name: Copy the config file
+      copy:
+        src: alertmanager-config.yml
+        dest: /opt/alertmanager/alertmanager-config.yml
+
+    - name: Copy the compose file
+      copy:
+        src: alertmanager-compose.yml
+        dest: /opt/alertmanager/alertmanager-compose.yml
+
+    - name: Pull Alertmanager image
+      command: docker-compose -f /opt/alertmanager/alertmanager-compose.yml pull alertmanager
+
+    - name: Deploy the Alertmanager stack
+      command: docker-compose -p alertmanager -f /opt/alertmanager/alertmanager-compose.yml up -d

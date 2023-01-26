@@ -1,0 +1,39 @@
+- name: Deploy Promtail using Docker Compose
+  hosts: monitoring 
+  become: true
+  vars:
+    compose_file: /opt/promtail/promtail-compose.yml
+    config_file: /opt/promtail/promtail-config.yml
+  tasks:
+    - name: Install Docker Compose
+      apt:
+        name: docker-compose
+        state: present
+
+    - name: Create the compose and config file directories
+      file:
+        path: /opt/promtail
+        state: directory
+
+    - name: Copy the compose file
+      copy:
+        src: promtail-compose.yml
+        dest: /opt/promtail/promtail-compose.yml
+
+    - name: Copy the config file
+      copy:
+        src: promtail-config.yml
+        dest: /opt/promtail/promtail-config.yml
+
+    - name: Replace logging server in config file
+      replace:
+        path: /opt/promtail/promtail-config.yml
+        regexp: 'logging_server: .*'
+        replace: 'logging_server: logging'
+
+    - name: Pull Promtail image
+      command: docker-compose -f /opt/promtail/promtail-compose.yml pull grafana/promtail
+    
+    - name: Deploy the Promtail stack
+      command: docker-compose -p promtail-f /opt/promtail/promtail-compose.yml up -d
+

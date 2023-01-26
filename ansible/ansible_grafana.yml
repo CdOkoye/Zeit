@@ -1,0 +1,26 @@
+- name: Deploy Grafana using Docker Compose
+  hosts: monitoring
+  become: true
+  vars:
+    compose_file: /opt/grafana/grafana-compose.yml
+  tasks:
+    - name: Install Docker Compose
+      apt:
+        name: docker-compose
+        state: present
+
+    - name: Create the compose file directory
+      file:
+        path: /opt/grafana
+        state: directory
+
+    - name: Copy the compose file
+      copy:
+        src: grafana-compose.yml
+        dest: /opt/grafana/grafana-compose.yml
+
+    - name: Pull Grafana image
+      command: docker-compose -f /opt/grafana/grafana-compose.yml pull grafana
+
+    - name: Deploy the Grafana stack
+      command: docker-compose -p grafana -f /opt/grafana/grafana-compose.yml up -d
